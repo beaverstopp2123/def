@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Функция для обработки команды 'def'
+def() {
+  case "$1" in
+    "")
+      echo "def"
+      echo "def install"
+      echo "def version"
+      echo "def delete"
+      echo "def browse"
+      ;;
+    version)
+      echo "DEF VERSION beta.0.0"
+      ;;
+    install)
+      if [ -z "$2" ]; then
+        echo "def error"
+        exit 1
+      fi
+      echo "def - installing $2..."
+      # Устанавливаем библиотеку, подавляем вывод pip3
+      pip3 install "$2" &>/dev/null
+      if [ $? -eq 0 ]; then
+        echo "def - $2 successfully installed"
+      else
+        echo "def error"
+      fi
+      ;;
+    delete)
+      if [ -z "$2" ]; then
+        echo "def error"
+        exit 1
+      fi
+      echo "def - deleting $2..."
+      # Удаляем библиотеку, подавляем вывод pip3
+      pip3 uninstall -y "$2" &>/dev/null
+      if [ $? -eq 0 ]; then
+        echo "def - done!"
+      else
+        echo "def error"
+      fi
+      ;;
+    browse)
+      if [ -z "$2" ]; then
+        echo "def error"
+        exit 1
+      fi
+      # Показываем путь к библиотеке с помощью pip show, подавляем вывод
+      LIBRARY_PATH=$(pip3 show "$2" 2>/dev/null | grep "Location" | cut -d' ' -f2)
+      if [ -n "$LIBRARY_PATH" ]; then
+        echo "def browse $2: $LIBRARY_PATH/$2"
+      else
+        echo "def error"
+      fi
+      ;;
+    *)
+      echo "def error"
+      ;;
+  esac
+}
+
+# Вызов основной функции
+def "$@"
+
